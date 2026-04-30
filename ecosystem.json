@@ -1,0 +1,436 @@
+{
+  "project": "Client Contacts",
+  "generated": "2024",
+  "services": [
+    {
+      "id": "contact-service",
+      "name": "ContactService",
+      "archetype": "http",
+      "purpose": "Owns all contact, lead, and account data with full CRUD operations and relationship management",
+      "tech": "Spring Boot",
+      "endpoints": [
+        {
+          "method": "POST",
+          "path": "/contacts",
+          "description": "Create a new contact"
+        },
+        {
+          "method": "GET",
+          "path": "/contacts/{id}",
+          "description": "Retrieve contact details"
+        },
+        {
+          "method": "PUT",
+          "path": "/contacts/{id}",
+          "description": "Update contact information"
+        },
+        {
+          "method": "GET",
+          "path": "/contacts",
+          "description": "Search and list contacts with filtering"
+        },
+        {
+          "method": "POST",
+          "path": "/accounts",
+          "description": "Create a new account/company"
+        },
+        {
+          "method": "GET",
+          "path": "/accounts/{id}/contacts",
+          "description": "List all contacts for an account"
+        }
+      ],
+      "publishes": [
+        "contact.created",
+        "contact.updated",
+        "contact.converted",
+        "account.created"
+      ],
+      "subscribes": [],
+      "dependsOn": []
+    },
+    {
+      "id": "activity-service",
+      "name": "ActivityService",
+      "archetype": "http",
+      "purpose": "Manages all customer interactions including calls, emails, meetings, and notes with timeline tracking",
+      "tech": "Spring Boot",
+      "endpoints": [
+        {
+          "method": "POST",
+          "path": "/activities",
+          "description": "Log a new activity (call, email, meeting, note)"
+        },
+        {
+          "method": "GET",
+          "path": "/activities",
+          "description": "Retrieve activities with filtering by contact, type, date range"
+        },
+        {
+          "method": "GET",
+          "path": "/contacts/{contactId}/timeline",
+          "description": "Get chronological activity timeline for a contact"
+        },
+        {
+          "method": "PUT",
+          "path": "/activities/{id}",
+          "description": "Update activity details or completion status"
+        }
+      ],
+      "publishes": [
+        "activity.logged",
+        "activity.completed"
+      ],
+      "subscribes": [
+        "contact.created"
+      ],
+      "dependsOn": [
+        "contact-service"
+      ]
+    },
+    {
+      "id": "opportunity-service",
+      "name": "OpportunityService",
+      "archetype": "http",
+      "purpose": "Manages sales pipeline and deals from prospect through close, tracking stages, values, and forecasting",
+      "tech": "Spring Boot",
+      "endpoints": [
+        {
+          "method": "POST",
+          "path": "/opportunities",
+          "description": "Create a new sales opportunity"
+        },
+        {
+          "method": "GET",
+          "path": "/opportunities/{id}",
+          "description": "Retrieve opportunity details"
+        },
+        {
+          "method": "PUT",
+          "path": "/opportunities/{id}/stage",
+          "description": "Update opportunity stage in the sales pipeline"
+        },
+        {
+          "method": "GET",
+          "path": "/opportunities",
+          "description": "Query opportunities with filtering by stage, owner, account, date range"
+        },
+        {
+          "method": "PUT",
+          "path": "/opportunities/{id}",
+          "description": "Update opportunity details (value, close date, probability)"
+        },
+        {
+          "method": "GET",
+          "path": "/opportunities/{id}/forecast",
+          "description": "Calculate weighted revenue forecast for opportunity"
+        },
+        {
+          "method": "GET",
+          "path": "/accounts/{accountId}/opportunities",
+          "description": "List all opportunities for a specific account"
+        }
+      ],
+      "publishes": [
+        "opportunity.created",
+        "opportunity.stage-changed",
+        "opportunity.won",
+        "opportunity.lost",
+        "opportunity.value-updated"
+      ],
+      "subscribes": [
+        "contact.created",
+        "activity.logged"
+      ],
+      "dependsOn": [
+        "contact-service",
+        "activity-service"
+      ]
+    },
+    {
+      "id": "user-service",
+      "name": "UserService",
+      "archetype": "http",
+      "purpose": "Manages user profiles, territories, team assignments, roles, and business context for authenticated users",
+      "tech": "Spring Boot",
+      "endpoints": [
+        {
+          "method": "GET",
+          "path": "/users/{id}",
+          "description": "Retrieve user profile and business context"
+        },
+        {
+          "method": "PUT",
+          "path": "/users/{id}",
+          "description": "Update user profile information"
+        },
+        {
+          "method": "GET",
+          "path": "/users/{id}/territory",
+          "description": "Get user's sales territory assignment"
+        },
+        {
+          "method": "PUT",
+          "path": "/users/{id}/territory",
+          "description": "Assign user to a different sales territory"
+        },
+        {
+          "method": "GET",
+          "path": "/users/{id}/subordinates",
+          "description": "Get list of team members reporting to this user"
+        },
+        {
+          "method": "GET",
+          "path": "/territories/{id}/users",
+          "description": "List all users assigned to a territory"
+        },
+        {
+          "method": "GET",
+          "path": "/users",
+          "description": "Search and list users with filtering by territory, role, team"
+        },
+        {
+          "method": "PUT",
+          "path": "/users/{id}/role",
+          "description": "Update user's role and permissions"
+        }
+      ],
+      "publishes": [
+        "user.territory-changed",
+        "user.role-updated",
+        "user.profile-updated",
+        "user.team-changed"
+      ],
+      "subscribes": [],
+      "dependsOn": []
+    },
+    {
+      "id": "campaign-service",
+      "name": "CampaignService",
+      "archetype": "http",
+      "purpose": "Manages marketing campaigns, email sequences, contact segmentation, and tracks engagement metrics",
+      "tech": "Spring Boot",
+      "endpoints": [
+        {
+          "method": "POST",
+          "path": "/campaigns",
+          "description": "Create a new marketing campaign"
+        },
+        {
+          "method": "GET",
+          "path": "/campaigns/{id}",
+          "description": "Retrieve campaign details and metrics"
+        },
+        {
+          "method": "PUT",
+          "path": "/campaigns/{id}",
+          "description": "Update campaign settings or status"
+        },
+        {
+          "method": "GET",
+          "path": "/campaigns",
+          "description": "List campaigns with filtering by status, type, owner"
+        },
+        {
+          "method": "POST",
+          "path": "/campaigns/{id}/contacts",
+          "description": "Add contacts to a campaign manually or via segment"
+        },
+        {
+          "method": "DELETE",
+          "path": "/campaigns/{id}/contacts/{contactId}",
+          "description": "Remove contact from campaign"
+        },
+        {
+          "method": "GET",
+          "path": "/campaigns/{id}/contacts",
+          "description": "List all contacts enrolled in campaign"
+        },
+        {
+          "method": "POST",
+          "path": "/campaigns/{id}/send",
+          "description": "Execute campaign send (email blast, sequence trigger)"
+        },
+        {
+          "method": "GET",
+          "path": "/campaigns/{id}/analytics",
+          "description": "Get campaign performance metrics (open rates, clicks, conversions)"
+        },
+        {
+          "method": "POST",
+          "path": "/segments",
+          "description": "Create contact segment based on criteria"
+        },
+        {
+          "method": "GET",
+          "path": "/segments/{id}/contacts",
+          "description": "Preview contacts matching segment criteria"
+        }
+      ],
+      "publishes": [
+        "campaign.created",
+        "campaign.sent",
+        "campaign.contact-added",
+        "campaign.contact-engaged",
+        "campaign.completed"
+      ],
+      "subscribes": [
+        "contact.created",
+        "contact.updated",
+        "opportunity.won"
+      ],
+      "dependsOn": [
+        "contact-service"
+      ]
+    },
+    {
+      "id": "notification-service",
+      "name": "NotificationService",
+      "archetype": "messaging",
+      "purpose": "Manages system notifications, alerts, transactional emails, and real-time communication channels",
+      "tech": "Spring Boot",
+      "endpoints": [
+        {
+          "method": "POST",
+          "path": "/notifications",
+          "description": "Send immediate notification to user or group"
+        },
+        {
+          "method": "GET",
+          "path": "/users/{userId}/notifications",
+          "description": "Retrieve user's notification history"
+        },
+        {
+          "method": "PUT",
+          "path": "/notifications/{id}/read",
+          "description": "Mark notification as read"
+        },
+        {
+          "method": "GET",
+          "path": "/users/{userId}/preferences",
+          "description": "Get user's notification preferences"
+        },
+        {
+          "method": "PUT",
+          "path": "/users/{userId}/preferences",
+          "description": "Update notification delivery preferences"
+        },
+        {
+          "method": "POST",
+          "path": "/alerts",
+          "description": "Create system alert or reminder"
+        },
+        {
+          "method": "GET",
+          "path": "/alerts",
+          "description": "List active alerts with filtering"
+        },
+        {
+          "method": "DELETE",
+          "path": "/alerts/{id}",
+          "description": "Dismiss or delete an alert"
+        }
+      ],
+      "publishes": [
+        "notification.sent",
+        "notification.failed",
+        "alert.triggered"
+      ],
+      "subscribes": [
+        "opportunity.stage-changed",
+        "opportunity.won",
+        "opportunity.lost",
+        "activity.logged",
+        "campaign.contact-engaged",
+        "contact.created",
+        "user.territory-changed"
+      ],
+      "dependsOn": [
+        "user-service"
+      ]
+    },
+    {
+      "id": "analytics-service",
+      "name": "AnalyticsService",
+      "archetype": "http",
+      "purpose": "Provides business intelligence, reporting, dashboards, and data analytics across all CRM domains",
+      "tech": "Spring Boot",
+      "endpoints": [
+        {
+          "method": "GET",
+          "path": "/reports/sales-pipeline",
+          "description": "Generate sales pipeline report with stage breakdown and forecasts"
+        },
+        {
+          "method": "GET",
+          "path": "/reports/activity-summary",
+          "description": "Get activity metrics by user, team, or time period"
+        },
+        {
+          "method": "GET",
+          "path": "/reports/campaign-performance",
+          "description": "Campaign ROI and engagement analytics"
+        },
+        {
+          "method": "GET",
+          "path": "/reports/user-performance",
+          "description": "Individual or team performance metrics"
+        },
+        {
+          "method": "GET",
+          "path": "/dashboards/{userId}",
+          "description": "Get personalized dashboard data for user"
+        },
+        {
+          "method": "POST",
+          "path": "/reports/custom",
+          "description": "Execute custom report with dynamic filters and grouping"
+        },
+        {
+          "method": "GET",
+          "path": "/reports/{id}/export",
+          "description": "Export report data as CSV, PDF, or Excel"
+        },
+        {
+          "method": "GET",
+          "path": "/metrics/kpis",
+          "description": "Get key performance indicators across all domains"
+        },
+        {
+          "method": "GET",
+          "path": "/reports/revenue-forecast",
+          "description": "Generate weighted revenue forecasts by territory and time period"
+        },
+        {
+          "method": "POST",
+          "path": "/reports/schedule",
+          "description": "Schedule recurring report delivery"
+        },
+        {
+          "method": "GET",
+          "path": "/analytics/trends",
+          "description": "Identify trends and patterns in sales and marketing data"
+        }
+      ],
+      "publishes": [
+        "report.generated",
+        "alert.threshold-exceeded",
+        "insight.discovered"
+      ],
+      "subscribes": [
+        "opportunity.created",
+        "opportunity.stage-changed",
+        "opportunity.won",
+        "opportunity.lost",
+        "activity.logged",
+        "campaign.sent",
+        "campaign.contact-engaged",
+        "contact.created",
+        "user.territory-changed"
+      ],
+      "dependsOn": [
+        "user-service"
+      ]
+    }
+  ]
+}
