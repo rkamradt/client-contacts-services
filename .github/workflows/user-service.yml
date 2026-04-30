@@ -1,0 +1,22 @@
+name: "Build user-service"
+
+on:
+  push:
+    branches: [main]
+    paths: ["user-service/**"]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: docker/login-action@v3
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+      - uses: docker/build-push-action@v5
+        with:
+          context: ./user-service
+          push: true
+          tags: ghcr.io/rkamradt/user-service:main
