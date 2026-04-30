@@ -1,0 +1,22 @@
+name: "Build opportunity-service"
+
+on:
+  push:
+    branches: [main]
+    paths: ["opportunity-service/**"]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: docker/login-action@v3
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+      - uses: docker/build-push-action@v5
+        with:
+          context: ./opportunity-service
+          push: true
+          tags: ghcr.io/rkamradt/opportunity-service:main
